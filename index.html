@@ -1,0 +1,453 @@
+
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&display=swap" rel="stylesheet"/>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+.L{--pg:#f7f7f5;--card:#fff;--surf:#f2f1ee;--surf2:#e8e7e3;--txt:#111;--txt2:#555;--txt3:#999;--brd:#e0ddd8;--brd2:rgba(0,0,0,0.12);--acc:#1a1a2e;--acc2:#2e2e50;--green:#2d7a3a;--gbg:#edf7ef;--amber:#7a4f00;--abg:#fdf3e0;--blue:#0c447c;--bbg:#e6f1fb;--input:#fff}
+.D{--pg:#0f0f0f;--card:#1a1a1a;--surf:#242424;--surf2:#2e2e2e;--txt:#f0f0f0;--txt2:#aaa;--txt3:#555;--brd:#2a2a2a;--brd2:rgba(255,255,255,0.09);--acc:#e8e6ff;--acc2:#c5c2f0;--green:#5dd87a;--gbg:#0d2e14;--amber:#f5c255;--abg:#2a1f00;--blue:#85b7eb;--bbg:#0a1e30;--input:#222}
+.root{background:var(--pg);font-family:'Inter',sans-serif;padding:1.5rem;border-radius:16px;transition:background .25s,color .25s}
+
+.topbar{display:flex;align-items:center;justify-content:space-between;margin-bottom:1.5rem;padding-bottom:1.25rem;border-bottom:1px solid var(--brd)}
+.logo-wrap{display:flex;align-items:center;gap:12px}
+.logo-mark{width:38px;height:38px;border-radius:10px;background:var(--acc);display:flex;align-items:center;justify-content:center}
+.D .logo-mark{background:#e8e6ff}
+.logo-mark i{font-size:20px;color:#fff}
+.D .logo-mark i{color:#1a1a2e}
+.logo-text{display:flex;flex-direction:column}
+.logo-name{font-size:15px;font-weight:600;color:var(--txt);letter-spacing:-.2px}
+.logo-sub{font-size:11px;color:var(--txt3);letter-spacing:.3px;text-transform:uppercase;margin-top:1px}
+.topbar-right{display:flex;align-items:center;gap:8px}
+.pill-btn{display:flex;align-items:center;gap:6px;padding:7px 13px;border:1px solid var(--brd2);border-radius:20px;background:var(--card);color:var(--txt2);font-size:12px;font-weight:500;cursor:pointer;font-family:'Inter',sans-serif;transition:all .15s;letter-spacing:.1px}
+.pill-btn:hover{background:var(--surf);color:var(--txt)}
+.pill-btn i{font-size:14px}
+
+.layout{display:grid;grid-template-columns:1fr 210px;gap:14px;align-items:start}
+.main{display:flex;flex-direction:column;gap:12px}
+
+.card{background:var(--card);border:1px solid var(--brd);border-radius:14px;overflow:hidden;transition:background .25s,border .25s}
+.card-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px;cursor:pointer;user-select:none;background:var(--card)}
+.card-hd:hover{background:var(--surf)}
+.card-hd-left{display:flex;align-items:center;gap:10px}
+.step-num{width:22px;height:22px;border-radius:50%;background:var(--surf2);display:flex;align-items:center;justify-content:center;font-size:11px;font-weight:600;color:var(--txt2)}
+.card-hd-label{font-size:13px;font-weight:600;color:var(--txt);letter-spacing:-.1px}
+.card-hd-sub{font-size:11px;color:var(--txt3);margin-top:1px}
+.chev{font-size:13px;color:var(--txt3);transition:transform .2s}
+.chev.open{transform:rotate(180deg)}
+.card-body{padding:16px;border-top:1px solid var(--brd)}
+.card-body.gone{display:none}
+
+.row2{display:grid;grid-template-columns:1fr 1fr;gap:12px}
+.field{display:flex;flex-direction:column;gap:6px}
+.field label{font-size:11px;font-weight:600;color:var(--txt3);letter-spacing:.5px;text-transform:uppercase}
+.sel-w{position:relative}
+.sel-w select{width:100%;appearance:none;padding:0 34px 0 12px;height:38px;border:1px solid var(--brd2);border-radius:10px;background:var(--input);color:var(--txt);font-size:13px;font-weight:500;font-family:'Inter',sans-serif;cursor:pointer;outline:none;transition:border .15s}
+.sel-w select:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(26,26,46,.08)}
+.D .sel-w select:focus{box-shadow:0 0 0 3px rgba(232,230,255,.12)}
+.sel-w i{position:absolute;right:10px;top:50%;transform:translateY(-50%);pointer-events:none;font-size:13px;color:var(--txt3)}
+input[type=number]{width:100%;height:38px;padding:0 12px;border:1px solid var(--brd2);border-radius:10px;background:var(--input);color:var(--txt);font-size:13px;font-weight:500;font-family:'Inter',sans-serif;outline:none;transition:border .15s}
+input[type=number]:focus{border-color:var(--acc);box-shadow:0 0 0 3px rgba(26,26,46,.08)}
+.D input[type=number]:focus{box-shadow:0 0 0 3px rgba(232,230,255,.12)}
+input::placeholder{color:var(--txt3);font-weight:400}
+
+.var-row{display:flex;align-items:flex-end;gap:8px;margin-top:12px}
+.var-row .field{flex:1}
+.sm-btn{height:38px;padding:0 14px;border:1px solid var(--brd2);border-radius:10px;background:var(--card);color:var(--txt);font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;gap:5px;white-space:nowrap;transition:all .15s}
+.sm-btn:hover{background:var(--surf);border-color:var(--acc)}
+
+.mode-grid{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-bottom:14px}
+.mcard{border:1.5px solid var(--brd);border-radius:12px;padding:13px 14px;cursor:pointer;transition:all .15s;background:var(--card)}
+.mcard:hover{border-color:var(--brd2);background:var(--surf)}
+.mcard.ar{border-color:#854F0B;background:var(--abg)}
+.mcard.ap{border-color:#185FA5;background:var(--bbg)}
+.mcard-name{font-size:13px;font-weight:600;display:flex;align-items:center;gap:7px;color:var(--txt)}
+.mcard.ar .mcard-name{color:var(--amber)}
+.mcard.ap .mcard-name{color:var(--blue)}
+.mcard-sub{font-size:11px;color:var(--txt3);margin-top:3px}
+
+.calc-btn{width:100%;height:42px;border:none;border-radius:11px;background:var(--acc);color:#fff;font-size:14px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;display:flex;align-items:center;justify-content:center;gap:8px;margin-top:14px;letter-spacing:.1px;transition:opacity .15s}
+.D .calc-btn{background:#e8e6ff;color:#1a1a2e}
+.calc-btn:hover{opacity:.85}
+.calc-btn i{font-size:16px}
+
+.res-wrap{display:none}
+.res-wrap.on{display:block}
+.res-hd{display:flex;align-items:center;justify-content:space-between;padding:14px 16px 0}
+.res-title{display:flex;align-items:center;gap:8px;font-size:15px;font-weight:600;color:var(--txt)}
+.res-title i{font-size:16px}
+.badge{font-size:11px;font-weight:600;padding:4px 10px;border-radius:20px;letter-spacing:.2px}
+.b-r{background:var(--abg);color:var(--amber)}
+.b-p{background:var(--bbg);color:var(--blue)}
+
+.mets{display:grid;grid-template-columns:repeat(3,1fr);gap:10px;padding:14px 16px}
+.met{background:var(--surf);border-radius:10px;padding:12px 14px}
+.met-l{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;margin-bottom:5px}
+.met-v{font-size:18px;font-weight:600;color:var(--txt);letter-spacing:-.3px}
+
+.sep{height:1px;background:var(--brd);margin:0 16px}
+.tbl-wrap{padding:0 16px 16px}
+table.rt{width:100%;border-collapse:collapse;table-layout:fixed;margin-top:12px}
+table.rt th{font-size:10px;font-weight:600;color:var(--txt3);text-transform:uppercase;letter-spacing:.5px;padding:8px 10px;border-bottom:1px solid var(--brd)}
+table.rt th:last-child{text-align:right}
+table.rt td{padding:10px 10px;font-size:13px;font-weight:500;color:var(--txt);border-bottom:1px solid var(--brd)}
+table.rt td:last-child{text-align:right;font-variant-numeric:tabular-nums}
+table.rt tr:last-child td{border:none}
+.sub-tr td{background:var(--surf);font-size:12px;color:var(--txt2)}
+.tot-tr td{background:var(--surf2);font-size:14px;font-weight:600;color:var(--txt)}
+
+.side{display:flex;flex-direction:column;gap:10px}
+.sc{background:var(--card);border:1px solid var(--brd);border-radius:14px;overflow:hidden;transition:background .25s}
+.sc-hd{display:flex;align-items:center;justify-content:space-between;padding:11px 14px;cursor:pointer;user-select:none}
+.sc-hd:hover{background:var(--surf)}
+.sc-hd-title{display:flex;align-items:center;gap:7px;font-size:11px;font-weight:600;color:var(--txt2);text-transform:uppercase;letter-spacing:.5px}
+.sc-body{border-top:1px solid var(--brd)}
+.sc-body.gone{display:none}
+
+.hist-item{padding:10px 14px;border-bottom:1px solid var(--brd)}
+.hist-item:last-child{border:none}
+.hi-top{display:flex;justify-content:space-between;align-items:center;margin-bottom:3px}
+.hi-plan{font-size:12px;font-weight:600;color:var(--txt)}
+.hi-hora{font-size:10px;color:var(--txt3)}
+.hi-bot{display:flex;justify-content:space-between;align-items:center}
+.hi-modo{font-size:11px;color:var(--txt3)}
+.hi-total{font-size:13px;font-weight:600;color:var(--green)}
+
+.exp-btns{display:flex;flex-direction:column;gap:6px;padding:10px 14px}
+.exp-btn{display:flex;align-items:center;gap:8px;padding:8px 10px;border:1px solid var(--brd2);border-radius:9px;background:var(--card);color:var(--txt2);font-size:12px;font-weight:600;font-family:'Inter',sans-serif;cursor:pointer;transition:all .15s;text-align:left;width:100%}
+.exp-btn:hover{background:var(--surf);color:var(--txt);border-color:var(--acc)}
+.exp-btn i{font-size:15px}
+.exp-pdf i{color:#c0392b}
+.exp-xls i{color:#1e7e34}
+.exp-doc i{color:#1565c0}
+
+.ref-item{display:flex;justify-content:space-between;padding:8px 14px;border-bottom:1px solid var(--brd);font-size:12px}
+.ref-item:last-child{border:none}
+.ref-item span:first-child{color:var(--txt2);font-weight:500}
+.ref-item span:last-child{font-weight:600;color:var(--txt)}
+.empty-hist{padding:14px;font-size:12px;color:var(--txt3);text-align:center;font-style:italic}
+</style>
+
+<div class="root L" id="root">
+<h2 style="position:absolute;width:1px;height:1px;overflow:hidden;clip:rect(0,0,0,0)">Calculadora de intereses EdSaCorp</h2>
+
+<div class="topbar">
+  <div class="logo-wrap">
+    <div class="logo-mark"><i class="ti ti-building-bank" aria-hidden="true"></i></div>
+    <div class="logo-text">
+      <span class="logo-name">EDSACORP</span>
+      <span class="logo-sub">Empeños El Diamante</span>
+    </div>
+  </div>
+  <div class="topbar-right">
+    <button class="pill-btn" onclick="toggleTheme()">
+      <i class="ti ti-moon" id="ti-icon" aria-hidden="true"></i>
+      <span id="ti-label">Modo oscuro</span>
+    </button>
+  </div>
+</div>
+
+<div class="layout">
+<div class="main">
+
+  <div class="card" id="c-plan">
+    <div class="card-hd" onclick="tog('c-plan')">
+      <div class="card-hd-left">
+        <span class="step-num">1</span>
+        <div>
+          <div class="card-hd-label">Plan y tasa de interés</div>
+          <div class="card-hd-sub">Selecciona el tipo de plan y la tasa a aplicar</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down chev open" id="chev-c-plan" aria-hidden="true"></i>
+    </div>
+    <div class="card-body" id="body-c-plan">
+      <div class="row2" style="margin-bottom:12px">
+        <div class="field">
+          <label>Tipo de plan</label>
+          <div class="sel-w">
+            <select id="sel-plan" onchange="onPlan()">
+              <option value="semanal">Semanal</option>
+              <option value="quincenal">Quincenal</option>
+              <option value="mensual">Mensual</option>
+            </select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+        <div class="field">
+          <label>Tasa de interés</label>
+          <div class="sel-w">
+            <select id="sel-tasa" onchange="clrRes()"></select>
+            <i class="ti ti-chevron-down" aria-hidden="true"></i>
+          </div>
+        </div>
+      </div>
+      <div class="var-row">
+        <div class="field">
+          <label>Tasa variable personalizada</label>
+          <input type="number" id="inp-var" min="0.01" max="100" step="0.01" placeholder="Ej. 9.50  %" />
+        </div>
+        <button class="sm-btn" onclick="applyVar()"><i class="ti ti-check" aria-hidden="true"></i> Aplicar</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="card" id="c-datos">
+    <div class="card-hd" onclick="tog('c-datos')">
+      <div class="card-hd-left">
+        <span class="step-num">2</span>
+        <div>
+          <div class="card-hd-label">Datos del préstamo</div>
+          <div class="card-hd-sub">Ingresa el monto y los días de atraso</div>
+        </div>
+      </div>
+      <i class="ti ti-chevron-down chev open" id="chev-c-datos" aria-hidden="true"></i>
+    </div>
+    <div class="card-body" id="body-c-datos">
+      <div class="mode-grid">
+        <div class="mcard ar" id="m-renov" onclick="setMode('renov')">
+          <div class="mcard-name"><i class="ti ti-refresh" aria-hidden="true"></i> Renovación</div>
+          <div class="mcard-sub">Cálculo de días de atraso</div>
+        </div>
+        <div class="mcard" id="m-recup" onclick="setMode('recup')">
+          <div class="mcard-name"><i class="ti ti-package" aria-hidden="true"></i> Recuperación</div>
+          <div class="mcard-sub">Rescate de prenda</div>
+        </div>
+      </div>
+      <div class="row2">
+        <div class="field">
+          <label>Monto del préstamo</label>
+          <input type="number" id="inp-monto" min="1" step="0.01" placeholder="Q 0.00" />
+        </div>
+        <div class="field">
+          <label>Días de atraso</label>
+          <input type="number" id="inp-dias" min="0" step="1" placeholder="0 días" />
+        </div>
+      </div>
+      <button class="calc-btn" onclick="calc()">
+        <i class="ti ti-calculator" aria-hidden="true"></i> Calcular
+      </button>
+    </div>
+  </div>
+
+  <div class="card res-wrap" id="c-res">
+    <div class="res-hd">
+      <div class="res-title" id="res-title"></div>
+      <span class="badge" id="res-badge"></span>
+    </div>
+    <div class="mets" id="res-mets"></div>
+    <div class="sep"></div>
+    <div class="tbl-wrap">
+      <table class="rt">
+        <thead><tr><th>Concepto</th><th>Monto</th></tr></thead>
+        <tbody id="res-tbody"></tbody>
+      </table>
+    </div>
+  </div>
+
+</div>
+
+<div class="side">
+
+  <div class="sc">
+    <div class="sc-hd" onclick="togS('sh-hist')">
+      <div class="sc-hd-title"><i class="ti ti-history" aria-hidden="true"></i> Historial</div>
+      <i class="ti ti-chevron-down chev open" id="chev-sh-hist" aria-hidden="true"></i>
+    </div>
+    <div class="sc-body" id="sh-hist">
+      <div id="hist-content"><div class="empty-hist">Sin cálculos aún</div></div>
+    </div>
+  </div>
+
+  <div class="sc">
+    <div class="sc-hd" onclick="togS('sh-exp')">
+      <div class="sc-hd-title"><i class="ti ti-download" aria-hidden="true"></i> Exportar historial</div>
+      <i class="ti ti-chevron-down chev open" id="chev-sh-exp" aria-hidden="true"></i>
+    </div>
+    <div class="sc-body" id="sh-exp">
+      <div class="exp-btns">
+        <button class="exp-btn exp-pdf" onclick="expPDF()"><i class="ti ti-file-type-pdf" aria-hidden="true"></i> PDF</button>
+        <button class="exp-btn exp-xls" onclick="expXLS()"><i class="ti ti-file-type-xls" aria-hidden="true"></i> Excel</button>
+        <button class="exp-btn exp-doc" onclick="expDOC()"><i class="ti ti-file-type-doc" aria-hidden="true"></i> Word</button>
+      </div>
+    </div>
+  </div>
+
+  <div class="sc">
+    <div class="sc-hd" onclick="togS('sh-ref')">
+      <div class="sc-hd-title"><i class="ti ti-percentage" aria-hidden="true"></i> Tasas por plan</div>
+      <i class="ti ti-chevron-down chev open" id="chev-sh-ref" aria-hidden="true"></i>
+    </div>
+    <div class="sc-body" id="sh-ref">
+      <div class="ref-item"><span>Semanal</span><span>7% · 7.75%</span></div>
+      <div class="ref-item"><span>Quincenal</span><span>12.5% · 13.25%</span></div>
+      <div class="ref-item"><span>Mensual</span><span>18% · 20% · 21%</span></div>
+    </div>
+  </div>
+
+  <div class="sc">
+    <div class="sc-hd" onclick="togS('sh-rc')">
+      <div class="sc-hd-title"><i class="ti ti-package" aria-hidden="true"></i> Cargos recuperación</div>
+      <i class="ti ti-chevron-down chev open" id="chev-sh-rc" aria-hidden="true"></i>
+    </div>
+    <div class="sc-body" id="sh-rc">
+      <div class="ref-item"><span>Semanal</span><span>15%</span></div>
+      <div class="ref-item"><span>Quincenal</span><span>8%</span></div>
+      <div class="ref-item"><span>Mensual</span><span>5%</span></div>
+    </div>
+  </div>
+
+</div>
+</div>
+</div>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/xlsx/0.18.5/xlsx.full.min.js"></script>
+<script>
+const PLANES={
+  semanal:{dias:7,tasas:[7,7.75],recup:0.15},
+  quincenal:{dias:15,tasas:[12.5,13.25],recup:0.08},
+  mensual:{dias:30,tasas:[18,20,21],recup:0.05}
+};
+let modo='renov', dark=false, hist=[];
+
+function toggleTheme(){
+  dark=!dark;
+  const r=document.getElementById('root');
+  r.className='root '+(dark?'D':'L');
+  document.getElementById('ti-icon').className=dark?'ti ti-sun':'ti ti-moon';
+  document.getElementById('ti-label').textContent=dark?'Modo claro':'Modo oscuro';
+}
+
+function tog(id){
+  const b=document.getElementById('body-'+id);
+  const c=document.getElementById('chev-'+id);
+  const gone=b.classList.toggle('gone');
+  c.classList.toggle('open',!gone);
+}
+function togS(id){
+  const b=document.getElementById(id);
+  const c=document.getElementById('chev-'+id);
+  const gone=b.classList.toggle('gone');
+  c.classList.toggle('open',!gone);
+}
+
+function onPlan(){
+  const p=document.getElementById('sel-plan').value;
+  const s=document.getElementById('sel-tasa');
+  s.innerHTML=PLANES[p].tasas.map(t=>`<option value="${t}">${t}%</option>`).join('');
+  clrRes();
+}
+function applyVar(){
+  const v=parseFloat(document.getElementById('inp-var').value);
+  if(!v||v<=0)return;
+  const s=document.getElementById('sel-tasa');
+  for(let i=s.options.length-1;i>=0;i--){if(s.options[i].text.includes('variable'))s.remove(i);}
+  const o=document.createElement('option');
+  o.value=v; o.text=v+'% (variable)'; o.selected=true; s.add(o); s.value=v; clrRes();
+}
+function setMode(m){
+  modo=m;
+  document.getElementById('m-renov').className='mcard'+(m==='renov'?' ar':'');
+  document.getElementById('m-recup').className='mcard'+(m==='recup'?' ap':'');
+  clrRes();
+}
+function clrRes(){document.getElementById('c-res').classList.remove('on');}
+
+function fmt(n){return 'Q '+parseFloat(n).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function row(l,v,cls){return `<tr class="${cls||''}"><td>${l}</td><td>${v}</td></tr>`;}
+
+function calc(){
+  const monto=parseFloat(document.getElementById('inp-monto').value);
+  const dias=parseInt(document.getElementById('inp-dias').value);
+  if(!monto||monto<=0){alert('Ingrese un monto válido.');return;}
+  if(isNaN(dias)||dias<0){alert('Ingrese los días de atraso.');return;}
+  const pk=document.getElementById('sel-plan').value;
+  const tasa=parseFloat(document.getElementById('sel-tasa').value)/100;
+  const plan=PLANES[pk];
+  const pnm=document.getElementById('sel-plan').options[document.getElementById('sel-plan').selectedIndex].text;
+  const tpct=(tasa*100).toFixed(2).replace(/\.?0+$/,'')+'%';
+  const iplan=monto*tasa;
+  const idia=iplan/plan.dias;
+  const iatr=idia*dias;
+  const iTotal=iplan+iatr;
+
+  const rs=document.getElementById('c-res');
+  const mt=document.getElementById('res-mets');
+  const tb=document.getElementById('res-tbody');
+
+  if(modo==='renov'){
+    const total=monto+iTotal;
+    document.getElementById('res-title').innerHTML=`<i class="ti ti-refresh" aria-hidden="true" style="font-size:16px"></i> Renovación`;
+    document.getElementById('res-badge').className='badge b-r';
+    document.getElementById('res-badge').textContent=pnm+' · '+tpct;
+    mt.innerHTML=`<div class="met"><div class="met-l">Capital</div><div class="met-v">${fmt(monto)}</div></div><div class="met"><div class="met-l">Interés del plan</div><div class="met-v">${fmt(iplan)}</div></div><div class="met"><div class="met-l">Días de atraso</div><div class="met-v">${dias}d</div></div>`;
+    tb.innerHTML=row('Capital',fmt(monto))+row('Interés del plan',fmt(iplan))+row('Interés por día',fmt(idia))+row('Interés por atraso',fmt(iatr))+row('Total de intereses',fmt(iTotal),'sub-tr')+row('Total a pagar',fmt(total),'tot-tr');
+    addHist(pnm,tpct,'Renovación',monto,total,[
+      ['Capital',monto],['Interés del plan',iplan],['Interés por día',idia],['Interés por atraso',iatr],['Total de intereses',iTotal],['Total a pagar',total]
+    ],dias);
+  } else {
+    const cargo=plan.recup*iatr;
+    const total=monto+iTotal+cargo;
+    const rpct=(plan.recup*100).toFixed(0)+'%';
+    document.getElementById('res-title').innerHTML=`<i class="ti ti-package" aria-hidden="true" style="font-size:16px"></i> Recuperación de prenda`;
+    document.getElementById('res-badge').className='badge b-p';
+    document.getElementById('res-badge').textContent=pnm+' · '+tpct;
+    mt.innerHTML=`<div class="met"><div class="met-l">Capital</div><div class="met-v">${fmt(monto)}</div></div><div class="met"><div class="met-l">Cargo recuperación</div><div class="met-v">${rpct}</div></div><div class="met"><div class="met-l">Días de atraso</div><div class="met-v">${dias}d</div></div>`;
+    tb.innerHTML=row('Capital',fmt(monto))+row('Interés del plan',fmt(iplan))+row('Interés por día',fmt(idia))+row('Interés por atraso',fmt(iatr))+row('Total de intereses',fmt(iTotal),'sub-tr')+row('Cargo recuperación',fmt(cargo))+row('Total a pagar',fmt(total),'tot-tr');
+    addHist(pnm,tpct,'Recuperación',monto,total,[
+      ['Capital',monto],['Interés del plan',iplan],['Interés por día',idia],['Interés por atraso',iatr],['Total de intereses',iTotal],['Cargo recuperación',cargo],['Total a pagar',total]
+    ],dias);
+  }
+  rs.classList.add('on');
+}
+
+function addHist(plan,tasa,modo,capital,total,detalle,dias){
+  const hora=new Date().toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'});
+  hist.unshift({plan,tasa,modo,capital,total,detalle,dias,hora,fecha:new Date().toLocaleDateString('es-GT')});
+  if(hist.length>10)hist.pop();
+  renderHist();
+}
+function renderHist(){
+  const c=document.getElementById('hist-content');
+  if(!hist.length){c.innerHTML='<div class="empty-hist">Sin cálculos aún</div>';return;}
+  c.innerHTML=hist.map(h=>`<div class="hist-item">
+    <div class="hi-top"><span class="hi-plan">${h.plan} · ${h.tasa}</span><span class="hi-hora">${h.hora}</span></div>
+    <div class="hi-bot"><span class="hi-modo">${h.modo} · ${h.dias}d</span><span class="hi-total">${fmt(h.total)}</span></div>
+  </div>`).join('');
+}
+
+function fmtNum(n){return parseFloat(n).toLocaleString('es-GT',{minimumFractionDigits:2,maximumFractionDigits:2});}
+
+function expXLS(){
+  if(!hist.length){alert('No hay historial para exportar.');return;}
+  const rows=[['Fecha','Hora','Plan','Tasa','Tipo','Capital','Días','Total a pagar']];
+  hist.forEach(h=>rows.push([h.fecha,h.hora,h.plan,h.tasa,h.modo,h.capital,h.dias,h.total]));
+  const ws=XLSX.utils.aoa_to_sheet(rows);
+  const wb=XLSX.utils.book_new();
+  XLSX.utils.book_append_sheet(wb,ws,'Historial');
+  XLSX.writeFile(wb,'historial_edsacorp.xlsx');
+}
+
+function expDOC(){
+  if(!hist.length){alert('No hay historial para exportar.');return;}
+  let html=`<html><head><meta charset="UTF-8"><style>body{font-family:Calibri,sans-serif;margin:40px}h1{font-size:20px;margin-bottom:4px}p{font-size:12px;color:#666;margin-bottom:24px}table{width:100%;border-collapse:collapse;font-size:13px}th{background:#1a1a2e;color:#fff;padding:8px 10px;text-align:left}td{padding:8px 10px;border-bottom:1px solid #e0e0e0}.total{font-weight:bold;background:#f5f5f5}</style></head><body>`;
+  html+=`<h1>Historial de cálculos — EdSaCorp</h1><p>Generado el ${new Date().toLocaleDateString('es-GT')}</p>`;
+  html+=`<table><tr><th>Fecha</th><th>Hora</th><th>Plan</th><th>Tasa</th><th>Tipo</th><th>Capital</th><th>Días</th><th>Total</th></tr>`;
+  hist.forEach(h=>{html+=`<tr><td>${h.fecha}</td><td>${h.hora}</td><td>${h.plan}</td><td>${h.tasa}</td><td>${h.modo}</td><td>Q ${fmtNum(h.capital)}</td><td>${h.dias}</td><td class="total">Q ${fmtNum(h.total)}</td></tr>`;});
+  html+=`</table></body></html>`;
+  const blob=new Blob(['\ufeff'+html],{type:'application/msword'});
+  const a=document.createElement('a'); a.href=URL.createObjectURL(blob); a.download='historial_edsacorp.doc'; a.click();
+}
+
+function expPDF(){
+  if(!hist.length){alert('No hay historial para exportar.');return;}
+  const w=window.open('','_blank');
+  let html=`<!DOCTYPE html><html><head><meta charset="UTF-8"><title>Historial EdSaCorp</title><style>*{box-sizing:border-box;margin:0;padding:0}body{font-family:Arial,sans-serif;padding:32px;color:#111}.header{display:flex;align-items:center;gap:12px;margin-bottom:24px;padding-bottom:16px;border-bottom:2px solid #1a1a2e}.logo{width:44px;height:44px;border-radius:10px;background:#1a1a2e;display:flex;align-items:center;justify-content:center;color:#fff;font-size:18px;font-weight:700}.title{font-size:20px;font-weight:700}.sub{font-size:12px;color:#777;margin-top:2px}.fecha{font-size:12px;color:#777;margin-bottom:20px}table{width:100%;border-collapse:collapse;font-size:13px}th{background:#1a1a2e;color:#fff;padding:9px 12px;text-align:left;font-size:11px;letter-spacing:.5px;text-transform:uppercase}td{padding:9px 12px;border-bottom:1px solid #eee}.tot{font-weight:700;color:#1a1a2e}tr:nth-child(even) td{background:#f9f9f9}@media print{button{display:none}}</style></head><body>`;
+  html+=`<div class="header"><div class="logo">E</div><div><div class="title">EdSaCorp</div><div class="sub">Casa de empeños — Historial de cálculos</div></div></div>`;
+  html+=`<p class="fecha">Generado el ${new Date().toLocaleDateString('es-GT')} a las ${new Date().toLocaleTimeString('es-GT',{hour:'2-digit',minute:'2-digit'})}</p>`;
+  html+=`<table><tr><th>Fecha</th><th>Hora</th><th>Plan</th><th>Tasa</th><th>Tipo</th><th>Capital</th><th>Días</th><th>Total</th></tr>`;
+  hist.forEach(h=>{html+=`<tr><td>${h.fecha}</td><td>${h.hora}</td><td>${h.plan}</td><td>${h.tasa}</td><td>${h.modo}</td><td>Q ${fmtNum(h.capital)}</td><td>${h.dias}</td><td class="tot">Q ${fmtNum(h.total)}</td></tr>`;});
+  html+=`</table><script>window.onload=function(){window.print();}<\/script></body></html>`;
+  w.document.write(html); w.document.close();
+}
+
+onPlan();
+</script>
